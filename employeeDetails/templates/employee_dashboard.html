@@ -1,0 +1,132 @@
+{% block employees %}
+<div>
+    <h1>Employees List</h1>
+<table >
+    <tr>
+        <th>Emp ID</th>
+        <th>Employees Name</th>
+        <th>Department</th>
+        <th>Role</th>
+        <th>Salary </th>
+    </tr>
+    <tbody id="employeesId">
+
+    </tbody>
+</table>
+</div>
+{% endblock employees %}
+
+{% comment %} <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>    {% endcomment %}
+
+{% comment %} <script>
+    const empTableBody = document.querySelector('#employeesId');
+    const baseURL = "http://127.0.0.1:8000/api/";
+
+    async function fetchData() {
+        try {
+            const response = await axios.get(`${baseURL}emp/list/`);
+            const employees = response.data;
+
+            // Clear table before adding new rows
+            empTableBody.innerHTML = '';
+
+            let salarySum = 0;
+
+            employees.forEach(emp => {
+                const tr = document.createElement('tr');
+
+                const td1 = document.createElement('td');
+                const td2 = document.createElement('td');
+                const td3 = document.createElement('td');
+                const td4 = document.createElement('td');
+                const td5 = document.createElement('td');
+
+                td1.textContent = emp.id;
+                td2.textContent = emp.user ;
+                td3.textContent = emp.department;
+                td4.textContent = emp.role;
+                td5.textContent = emp.salary;
+
+                tr.appendChild(td1);
+                tr.appendChild(td2);
+                tr.appendChild(td3);
+                tr.appendChild(td4);
+                tr.appendChild(td5);
+
+                empTableBody.appendChild(tr);
+
+                salarySum += parseFloat(emp.salary);
+            });
+
+            const totalRow = document.createElement('tr');
+
+            const tdLabel = document.createElement('td');
+            tdLabel.colSpan = 4;
+            tdLabel.style.fontWeight = 'bold';
+            tdLabel.textContent = 'Total Salary';
+
+            const tdTotal = document.createElement('td');
+            tdTotal.style.fontWeight = 'bold';
+            tdTotal.textContent = salarySum.toFixed(2);
+
+            totalRow.appendChild(tdLabel);
+            totalRow.appendChild(tdTotal);
+
+            empTableBody.appendChild(totalRow);
+
+        } catch (error) {
+            console.error('Error fetching employees:', error);
+        }
+    }
+
+    fetchData(); 
+</script> {% endcomment %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+
+
+
+<script>
+    $(document).ready(function(){
+        let salarySum=0
+        const empTableBody = document.querySelector('#employeesId');
+        const baseURL = "http://127.0.0.1:8000/api/";
+
+         $.ajax({
+            url:`${baseURL}emp/list/`,
+            type:"GET",
+            success:function(response){
+                response.forEach(emp => {
+                    const tr = document.createElement('tr');
+
+                    const td1 = document.createElement('td');
+                    const td2 = document.createElement('td');
+                    const td3 = document.createElement('td');
+                    const td4 = document.createElement('td');
+                    const td5 = document.createElement('td');
+                    
+                    td1.textContent = emp.id;
+                    td2.textContent = emp.user ;
+                    td3.textContent = emp.department;
+                    td4.textContent = emp.role;
+                    td5.textContent = emp.salary;
+                    
+                    tr.appendChild(td1);
+                    tr.appendChild(td2);
+                    tr.appendChild(td3);
+                    tr.appendChild(td4);
+                    tr.appendChild(td5);
+                    
+                    empTableBody.appendChild(tr);
+                    salarySum += parseFloat(emp.salary);
+                });
+                    const totalRow = document.createElement('tr');
+                    const totalTd = document.createElement('td');
+                    totalTd.textContent = "Total Salary: " + salarySum;
+                    totalTd.colSpan = 5;
+                    totalTd.textContent = "Total Salary: " + salarySum;    
+                    totalRow.appendChild(totalTd);
+                    empTableBody.appendChild(totalRow);
+            },
+        })
+    })
+</script>
