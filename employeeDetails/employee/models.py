@@ -13,19 +13,51 @@ class Department(models.Model):
 
 
 class EmployeeInfo(models.Model):
-    Roles={
-        'junior':"junior",
-        'senior':"Senior",
-        'intern':"intern",
-    }
+    Roles=[
+        ('intern', 'Intern'),
+        ('junior', 'Junior'),
+        ('senior', 'Senior'),
+        ('lead', 'Lead'),
+    ]
     user=models.ForeignKey(User,on_delete=models.CASCADE,related_name='user')
-    salary=models.DecimalField(decimal_places=2,max_digits=10)
+    salary=models.PositiveBigIntegerField(null=True, blank=True)
     department=models.ForeignKey(Department, on_delete=models.CASCADE,related_name='department')
-    role=models.CharField(default="intern", choices=Roles)
+    role=models.CharField(default="intern", choices=Roles,max_length=20)
     address=models.TextField(max_length=500, null=True, blank=True)
+    can_view=models.BooleanField(default=True)
+    can_edit=models.BooleanField(default=False)
+    can_delete=models.BooleanField(default=False)
     is_active= models.BooleanField(default=True)
     is_delete=models.BooleanField(default=False)
     create_at=models.DateTimeField(auto_now_add=True)
-
+    
     def __str__(self):
         return self.user.username
+
+
+class Task(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'), 
+        ('completed', 'Completed'), 
+        ('in_progress', 'In Progress')
+        ]
+    
+    task = models.CharField(max_length=200)
+    description = models.TextField(blank=True, null=True)
+    deadline = models.DateField(blank=True, null=True)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='pending'
+    )
+
+    def __str__(self):
+        return f"{self.task} - {self.status}"
+    
+class TaksInfo(models.Model):
+    employee = models.ForeignKey(EmployeeInfo, on_delete=models.CASCADE, related_name='tasks')
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='employee_tasks')
+    assigned_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.employee.user.username} - {self.task.task}"

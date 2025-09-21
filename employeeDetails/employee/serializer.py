@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Department, EmployeeInfo
+from .models import Department, EmployeeInfo, Task
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -42,3 +42,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
         )
 
         return employee
+
+
+class TaskSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Task
+        fields = ['id', 'task', 'description', 'deadline', 'status']
