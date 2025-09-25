@@ -11,6 +11,14 @@ class Department(models.Model):
     def __str__(self):
             return self.name
 
+class Branch(models.Model):
+    name= models.CharField(max_length=100,)
+    address=models.TextField(max_length=500, null=True, blank=True)
+    is_active= models.BooleanField(default=True)
+    is_delete=models.BooleanField(default=False)
+    create_at=models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+            return self.name
 
 class EmployeeInfo(models.Model):
     Roles=[
@@ -25,8 +33,6 @@ class EmployeeInfo(models.Model):
     role=models.CharField(default="intern", choices=Roles,max_length=20)
     address=models.TextField(max_length=500, null=True, blank=True)
     can_view=models.BooleanField(default=True)
-    can_edit=models.BooleanField(default=False)
-    can_delete=models.BooleanField(default=False)
     is_active= models.BooleanField(default=True)
     is_delete=models.BooleanField(default=False)
     create_at=models.DateTimeField(auto_now_add=True)
@@ -34,6 +40,9 @@ class EmployeeInfo(models.Model):
     def __str__(self):
         return self.user.username
 
+class BranchPermission(models.Model):
+    employee = models.ForeignKey(EmployeeInfo, on_delete=models.CASCADE, related_name='branch_permissions')
+    branch= models.ForeignKey(Branch, on_delete=models.CASCADE, related_name='branch_employees')
 
 class Task(models.Model):
     STATUS_CHOICES = [

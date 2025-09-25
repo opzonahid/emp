@@ -1,21 +1,96 @@
 {% extends "admin/base_site.html" %}
+
 {% load i18n static %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
+{% block extrastyle %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'admin/css/dashboard.css' %}">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+{% endblock %}
 
 {% block coltype %}colMS{% endblock %}
 
-{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+{% block bodyclass %}{{ block.super }} modern-dashboard{% endblock %}
 
-{% block nav-breadcrumbs %}{% endblock %}
+{% block breadcrumbs %}{% endblock %}
 
-{% block nav-sidebar %}{% endblock %}
+{% block nav-sidebar %}
+{% comment %} <div class="modern-sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <div class="logo-container">
+      <i class="fas fa-shield-alt logo-icon"></i>
+      <h2 class="logo-text">Admin Panel</h2>
+    </div>
+    <button class="sidebar-toggle" id="sidebarToggle">
+      <i class="fas fa-bars"></i>
+    </button>
+  </div>
+  
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      <li class="nav-item active">
+        <a href="#" class="nav-link">
+          <i class="fas fa-tachometer-alt nav-icon"></i>
+          <span class="nav-text">Dashboard</span>
+          <div class="nav-indicator"></div>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="fas fa-users nav-icon"></i>
+          <span class="nav-text">Users</span>
+          <div class="nav-indicator"></div>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="fas fa-building nav-icon"></i>
+          <span class="nav-text">Departments</span>
+          <div class="nav-indicator"></div>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="fas fa-user-tie nav-icon"></i>
+          <span class="nav-text">Employees</span>
+          <div class="nav-indicator"></div>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="fas fa-chart-bar nav-icon"></i>
+          <span class="nav-text">Analytics</span>
+          <div class="nav-indicator"></div>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="fas fa-cog nav-icon"></i>
+          <span class="nav-text">Settings</span>
+          <div class="nav-indicator"></div>
+        </a>
+      </li>
+    </ul>
+  </nav>
+  
+  <div class="sidebar-footer">
+    <div class="user-profile">
+      <div class="user-avatar">
+        <i class="fas fa-user"></i>
+      </div>
+      <div class="user-info">
+        <span class="user-name">Admin User</span>
+        <span class="user-role">Administrator</span>
+      </div>
+    </div>
+  </div>
+</div> {% endcomment %}
+{% endblock %}
 
-<div>
-    {% block content %}
- <div id="content-main">
+{% block content %}
+<div id="content-main">
   {% include "admin/app_list.html" with app_list=app_list show_changelinks=True %}
-</div> 
+</div>
 {% endblock %}
 
 {% block sidebar %}
@@ -23,6 +98,9 @@
     <div class="module" id="recent-actions-module">
         {% include "employee_dashboard.html" %}
     </div>
-</div>  
-{% endblock %}
 </div>
+{% endblock %}
+
+{% block extrajs %}
+   
+{% endblock %}

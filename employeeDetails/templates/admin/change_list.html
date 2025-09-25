@@ -74,7 +74,7 @@
         {% block pagination %}{% pagination cl %}{% endblock %}
         </form>
       </div>
-      {% block filters %}
+      {% comment %} {% block filters %}
         {% if cl.has_filters %}
           <div id="changelist-filter">
             <h2>{% translate 'Filter' %}</h2>
@@ -84,7 +84,7 @@
             {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
           </div>
         {% endif %}
-      {% endblock %}
+      {% endblock %} {% endcomment %}
     </div>
   </div>
 {% endblock %}

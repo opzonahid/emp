@@ -1,17 +1,76 @@
 {% block employees %}
-<div>
-  <h1>Employees List</h1>
-  <table>
-    <tr>
-      <th>Emp ID</th>
-      <th>Employees Name</th>
-      <th>Department</th>
-      <th>Role</th>
-      <th>Salary</th>
-    </tr>
-    <tbody id="employeesId"></tbody>
-  </table>
-</div>
+      <div class="container">
+        <!-- Header Section -->
+        <header class="page-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <i class="fas fa-users header-icon"></i>
+                    <div>
+                        <h1 class="page-title">Employee Management</h1>
+                        <p class="page-subtitle">Manage your team efficiently</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+       
+
+        <!-- Search and Filter Section -->
+        <div class="controls-section">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search employees..." id="searchInput">
+            </div>
+        </div>
+
+        <!-- Your existing Django template block -->
+        
+        <div class="table-container">
+            <div class="table-header">
+                <h1 class="table-title">
+                    <i class="fas fa-list"></i>
+                    Employees List
+                </h1>
+                <div class="table-actions">
+                    <button class="btn btn-outline" id="refreshBtn">
+                        <i class="fas fa-sync-alt"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-wrapper">
+                <table class="employees-table">
+                    <thead>
+                        <tr>
+                            <th>
+                                <i class="fas fa-id-badge"></i>
+                                Emp ID
+                            </th>
+                            <th>
+                                <i class="fas fa-user"></i>
+                                Employee Name
+                            </th>
+                            <th>
+                                <i class="fas fa-building"></i>
+                                Department
+                            </th>
+                            <th>
+                                <i class="fas fa-briefcase"></i>
+                                Role
+                            </th>
+                            <th>
+                                <i class="fas fa-dollar-sign"></i>
+                                Salary
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="employeesId">
+                        <!-- add table rows using ajax query -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
 {% endblock employees %} {% comment %}
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 {% endcomment %} {% comment %}
@@ -271,7 +330,8 @@
 {% endcomment %}
 
 <script>
-  $(document).ready(function () {
+  
+  {% comment %} $(document).ready(function () {
     let salarySum = 0;
     let newSalary = 0;
     const empTableBody = document.querySelector("#employeesId");
@@ -291,9 +351,6 @@
                                     <td>${emp.user}</td>
                                     <td>${emp.department}</td>
                                     <td>${emp.role}</td>
-                                    {% comment %} <td class="salary" id="salary-id" data-id="${emp.id}">
-                                        <span class="amount-input" value="${emp.salary}">${emp.salary}</span>
-                                    </td> {% endcomment %}
                                     <td>
                             <input id="${emp.id}"
                                    type="number"
@@ -368,6 +425,185 @@
 
     tableDetails();
    
-  });
+  }); {% endcomment %}
+
+const $ = window.$ 
+$(document).ready(() => {
+  let salarySum = 0
+  const newSalary = 0
+  let employeesData = []
+  const empTableBody = document.querySelector("#employeesId")
+  const baseURL = "http://127.0.0.1:8000/api/"
+  function tableDetails() {
+    empTableBody.innerHTML = ""
+    salarySum = 0
+
+    $.ajax({
+      url: `${baseURL}emp/list/`,
+      type: "GET",
+      success: (response) => {
+        employeesData = response
+
+        response.forEach((emp) => {
+          const rows = `<tr>
+                                        <td>${emp.id}</td>
+                                        <td>${emp.user}</td>
+                                        <td>${emp.department}</td>
+                                        <td>${emp.role}</td>
+                                        <td>
+                                <input id="${emp.id}"
+                                       type="number"
+                                       class="amount-input form-control"
+                                       step="1"
+                                       min="0"
+                                       value="${emp.salary}" />
+                            </td>
+                                      </tr>`
+          empTableBody.innerHTML += rows
+          salarySum += Number.parseFloat(emp.salary)
+        })
+
+        const totalRow = `<tr>
+                                        <td colspan="4"><strong>Total Salary:</strong></td>
+                                        <td id="totalSalary"><strong>$${salarySum.toLocaleString()}</strong></td>
+                                      </tr>`
+        empTableBody.innerHTML += totalRow
+
+        updateStats()
+        updateTableInfo()
+        populateFilters()
+      },
+    })
+  }
+
+  function updateStats() {
+    const totalEmployees = employeesData.length
+    const departments = [...new Set(employeesData.map((emp) => emp.department))]
+    const avgSalary = totalEmployees > 0 ? salarySum / totalEmployees : 0
+
+    document.getElementById("totalEmployees").textContent = totalEmployees
+    document.getElementById("totalDepartments").textContent = departments.length
+    document.getElementById("avgSalary").textContent = `$${Math.round(avgSalary).toLocaleString()}`
+    document.getElementById("totalPayroll").textContent = `$${salarySum.toLocaleString()}`
+  }
+
+  function updateTableInfo() {
+    const count = employeesData.length
+    document.getElementById("tableInfo").textContent = `Showing ${count} employee${count !== 1 ? "s" : ""}`
+  }
+
+  function populateFilters() {
+    const departments = [...new Set(employeesData.map((emp) => emp.department))]
+    const roles = [...new Set(employeesData.map((emp) => emp.role))]
+
+    const deptFilter = document.getElementById("departmentFilter")
+    const roleFilter = document.getElementById("roleFilter")
+
+    deptFilter.innerHTML = '<option value="">All Departments</option>'
+    roleFilter.innerHTML = '<option value="">All Roles</option>'
+
+    departments.forEach((dept) => {
+      deptFilter.innerHTML += `<option value="${dept}">${dept}</option>`
+    })
+
+    roles.forEach((role) => {
+      roleFilter.innerHTML += `<option value="${role}">${role}</option>`
+    })
+  }
+
+  empTableBody.addEventListener("click", (event) => {
+    if (event.target.closest(".salary")) {
+      const td = event.target.closest(".salary")
+      const id = td.dataset.id
+      
+    }
+  })
+
+  function recalcTotal() {
+    let total = 0
+
+    $(".amount-input").each(function () {
+      const val = Number.parseFloat($(this).val()) || 0
+      total += val
+    })
+
+    $("#totalSalary").html(`<strong>$${total.toLocaleString()}</strong>`)
+
+    document.getElementById("totalPayroll").textContent = `$${total.toLocaleString()}`
+    const totalEmployees = employeesData.length
+    const avgSalary = totalEmployees > 0 ? total / totalEmployees : 0
+    document.getElementById("avgSalary").textContent = `$${Math.round(avgSalary).toLocaleString()}`
+  }
+
+  $(document).on("keyup change", ".amount-input", () => {
+    recalcTotal()
+  })
+
+  $(document).on("blur", ".amount-input", function () {
+    const input = $(this)
+    const newSalary = input.val()
+    const id = input.attr("id")
+    const csrftoken = document.querySelector("[name=csrfmiddlewaretoken]").value
+
+    $.ajax({
+      url: `${baseURL}emp/${id}/`,
+      type: "PATCH",
+      data: JSON.stringify({ salary: newSalary }),
+      contentType: "application/json",
+      headers: { "X-CSRFToken": csrftoken },
+
+      success: (response) => {
+        console.log("Updated successfully", response)
+        recalcTotal()
+      },
+      error: (error) => {
+        console.error("Error updating salary:", error)
+      },
+    })
+  })
+
+  $("#searchInput").on("keyup", function () {
+    const searchTerm = $(this).val().toLowerCase()
+    $("#employeesId tr").each(function () {
+      const row = $(this)
+      if (row.find("td").length > 1) {
+        const text = row.text().toLowerCase()
+        row.toggle(text.includes(searchTerm))
+      }
+    })
+  })
+
+  $("#departmentFilter, #roleFilter").on("change", () => {
+    const deptFilter = $("#departmentFilter").val()
+    const roleFilter = $("#roleFilter").val()
+
+    $("#employeesId tr").each(function () {
+      const row = $(this)
+      if (row.find("td").length > 1) {
+        const dept = row.find("td:eq(2)").text()
+        const role = row.find("td:eq(3)").text()
+
+        const deptMatch = !deptFilter || dept === deptFilter
+        const roleMatch = !roleFilter || role === roleFilter
+
+        row.toggle(deptMatch && roleMatch)
+      }
+    })
+  })
+
+  $("#refreshBtn").on("click", function () {
+    const btn = $(this)
+    const originalHtml = btn.html()
+    btn.html('<span class="loading"></span> Refreshing...')
+
+    setTimeout(() => {
+      tableDetails()
+      btn.html(originalHtml)
+    }, 1000)
+  })
+
+  recalcTotal()
+  tableDetails()
+})
 
 </script>

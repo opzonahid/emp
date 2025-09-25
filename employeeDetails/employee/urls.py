@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path
 # from .views import (DepartmentListCreateView, DepartmentUpdateDestryView,
-from .views import (EmployeeInfoListCreateView,EmployeeListUpdateDestryView,get_last_employee_task, TaskUpdateDestryView)
+from .views import (EmployeeInfoListCreateView,EmployeeListUpdateDestryView,get_last_employee_task, TaskUpdateDestryView, EmployeeTaskPdfView,EmployeeExcelView)
 urlpatterns = [
     # path('/dep/list/', DepartmentListCreateView.as_view(), name="department"),
     # path('/dep/<int:pk>/',DepartmentUpdateDestryView.as_view(), name="department" ),
@@ -9,4 +9,6 @@ urlpatterns = [
     path('emp/<int:pk>/',EmployeeListUpdateDestryView.as_view(), name="department" ),
     path('task/<int:pk>/',get_last_employee_task, name="tasks" ),
     path('update/task/<int:pk>/',TaskUpdateDestryView.as_view(), name="update_tasks" ),
+    path('pdf/<int:pk>/', EmployeeTaskPdfView.as_view(), name="employee_task_pdf"),
+    path('excel/<int:pk>/', EmployeeExcelView.as_view(), name="employee_task_excel"),
 ]
